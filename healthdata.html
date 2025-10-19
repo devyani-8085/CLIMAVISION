@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimaVision - Health Data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* --- Global Styles & Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --brand-primary: #4f46e5; /* A nice indigo/purple */
+            --brand-light: #eef2ff;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --green: #10b981;
+            --red: #ef4444;
+            --orange: #f97316;
+            --blue: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            color: var(--brand-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a.active {
+            color: var(--brand-primary);
+            font-weight: 600;
+            background-color: var(--brand-light);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-initials {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: var(--card-bg);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .initial-t { background-color: var(--green); }
+        .initial-a { background-color: var(--orange); }
+
+        .share-btn {
+            background-color: var(--brand-primary);
+            color: var(--card-bg);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* --- Summary Cards --- */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .summary-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .summary-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .summary-card .icon.records {
+            background-color: #e0f2fe; /* light blue */
+            color: var(--blue);
+        }
+        .summary-card .icon.status {
+            background-color: #dcfce7; /* light green */
+            color: var(--green);
+        }
+        .summary-card .icon.checkup {
+            background-color: #ffedd5; /* light orange */
+            color: var(--orange);
+        }
+
+        .summary-card .text h3 {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .summary-card .text p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* --- Tabs --- */
+        .tabs {
+            margin-top: 2rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tab-btn {
+            border: none;
+            background-color: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Chart Container --- */
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .chart-container h2 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Medical History / Symptom Content --- */
+        .content-section {
+            margin-top: 2rem;
+        }
+
+        .content-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .symptom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .symptom-tag {
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .info-card,
+        .history-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card p {
+            font-weight: 500;
+        }
+
+        .history-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .history-card-header h3 {
+            font-size: 1.125rem;
+            color: var(--text-primary);
+        }
+        
+        .history-card-header .date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .history-card-header .temp {
+            font-size: 1.125rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .temp-high { color: var(--red); }
+        .temp-low { color: var(--green); }
+
+        .history-card .symptoms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .history-card .recommendation {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.25rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo">
+                <i class="fa-solid fa-cloud-sun-rain logo-icon"></i>
+                ClimaVision
+            </div>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Map</a>
+                <a href="#" class="active">Health Data</a>
+                <a href="#">Preventive Measures</a>
+                <a href="#">Fake News</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="user-initials initial-t">T</div>
+            <div class="user-initials initial-a">A</div>
+            <button class="share-btn">Share</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="summary-cards">
+            <div class="summary-card">
+                <div class="icon records">
+                    <i class="fa-solid fa-file-medical"></i>
+                </div>
+                <div class="text">
+                    <h3>Total Records</h3>
+                    <p>4</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="icon status">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div class="text">
+                    <h3>Current Status</h3>
+                    <p>Healthy</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="icon checkup">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div class="text">
+                    <h3>Last Checkup</h3>
+                    <p>Oct 5</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="timeline">Timeline</button>
+            <button class="tab-btn" data-tab="symptoms">Symptoms</button>
+        </div>
+
+        <div id="timeline-content" class="tab-content active">
+            <div class="chart-container">
+                <h2>Temperature Trend</h2>
+                <canvas id="tempChart"></canvas>
+            </div>
+            <div class="content-section">
+                <h2>Medical History</h2>
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <div>
+                            <h3>Viral Fever</h3>
+                            <p class="date">October 5, 2025</p>
+                        </div>
+                        <p class="temp temp-high">101.5°F</p>
+                    </div>
+                    <div class="symptoms">
+                        <span class="symptom-tag">Fever</span>
+                        <span class="symptom-tag">Headache</span>
+                        <span class="symptom-tag">Fatigue</span>
+                    </div>
+                    <div class="recommendation">
+                        Prescribed rest and fluids
+                    </div>
+                </div>
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <div>
+                            <h3>Common Cold</h3>
+                            <p class="date">September 20, 2025</p>
+                        </div>
+                        <p class="temp temp-low">98.6°F</p>
+                    </div>
+                    <div class="symptoms">
+                        <span class="symptom-tag">Cough</span>
+                        <span class="symptom-tag">Sore Throat</span>
+                    </div>
+                    <div class="recommendation">
+                        Over-the-counter medication recommended
+                    </div>
+                </div>
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <div>
+                            <h3>Suspected Malaria</h3>
+                            <p class="date">September 10, 2025</p>
+                        </div>
+                        <p class="temp temp-high">103.2°F</p>
+                    </div>
+                    <div class="symptoms">
+                        <span class="symptom-tag">Fever</span>
+                        <span class="symptom-tag">Body Ache</span>
+                        <span class="symptom-tag">Chills</span>
+                    </div>
+                    <div class="recommendation">
+                        Blood test conducted, antimalarial prescribed
+                    </div>
+                </div>
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <div>
+                            <h3>Food Poisoning</h3>
+                            <p class="date">August 15, 2025</p>
+                        </div>
+                        <p class="temp temp-low">99.1°F</p>
+                    </div>
+                    <div class="symptoms">
+                        <span class="symptom-tag">Diarrhea</span>
+                        <span class="symptom-tag">Nausea</span>
+                    </div>
+                    <div class="recommendation">
+                        Hydration and probiotics advised
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="symptoms-content" class="tab-content">
+            <div class="content-section">
+                <h2>Symptoms</h2>
+                <div class="symptom-tags">
+                    <span class="symptom-tag">Cough</span>
+                    <span class="symptom-tag">Sore Throat</span>
+                    <span class="symptom-tag">Fever</span>
+                    <span class="symptom-tag">Headache</span>
+                    <span class="symptom-tag">Fatigue</span>
+                    <span class="symptom-tag">Body Ache</span>
+                    <span class="symptom-tag">Chills</span>
+                    <span class="symptom-tag">Diarrhea</span>
+                    <span class="symptom-tag">Nausea</span>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="info-card">
+                    <p>Over-the-counter medication recommended</p>
+                </div>
+            </div>
+            <div class="content-section">
+                <h2>Medical History</h2>
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <div>
+                            <h3>Suspected Malaria</h3>
+                            <p class="date">September 10, 2025</p>
+                        </div>
+                        <p class="temp temp-high">103.2°F</p>
+                    </div>
+                    <div class="symptoms">
+                        <span class="symptom-tag">Fever</span>
+                        <span class="symptom-tag">Body Ache</span>
+                        <span class="symptom-tag">Chills</span>
+                    </div>
+                    <div class="recommendation">
+                        Blood test conducted, antimalarial prescribed
+                    </div>
+                </div>
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <div>
+                            <h3>Food Poisoning</h3>
+                            <p class="date">August 15, 2025</p>
+                        </div>
+                        <p class="temp temp-low">99.1°F</p>
+                    </div>
+                    <div class="symptoms">
+                        <span class="symptom-tag">Diarrhea</span>
+                        <span class="symptom-tag">Nausea</span>
+                    </div>
+                    <div class="recommendation">
+                        Hydration and probiotics advised
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Chart.js Graph Setup ---
+            const ctx = document.getElementById('tempChart').getContext('2d');
+            
+            // Data extracted from the graph in the screenshot
+            const graphLabels = ['~Sep 1', 'Sep 10', 'Sep 20', 'Oct 5'];
+            const graphData = [98.5, 102.5, 98.6, 100.0];
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: graphLabels,
+                    datasets: [{
+                        label: 'Temperature',
+                        data: graphData,
+                        borderColor: 'var(--brand-primary)',
+                        backgroundColor: 'var(--brand-light)',
+                        fill: false,
+                        tension: 0.4, // For the smooth curve
+                        pointBackgroundColor: 'var(--brand-primary)',
+                        pointBorderColor: 'var(--brand-primary)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false // Hides the legend
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '°F';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 95,
+                            max: 105,
+                            title: {
+                                display: false,
+                                text: 'Temperature (°F)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false // Hides vertical grid lines
+                            }
+                        }
+                    }
+                }
+            });
+
+            // --- Tab Switching Logic ---
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+
+                    // Remove active class from all buttons and content
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    document.getElementById(tabId + '-content').classList.add('active');
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
