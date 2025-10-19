@@ -4,36 +4,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preventive Measures</title>
+    <title>Disease Preventive Measures</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use the Inter font and a simple color palette -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary-green': '#10b981', // Emerald 500
+                        'bg-light': '#f3f4f6', // Gray 100
+                        'card-bg': '#ffffff', // White
+                        'risk-high': '#ef4444', // Red 500
+                        'risk-medium': '#f59e0b', // Amber 500
+                        'risk-low': '#3b82f6', // Blue 500
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
+        /* Optional custom styling for interactive element shadows */
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        h1 {
-            color: #2c3e50;
+        .outbreak-item, .general-item {
+            transition: background-color 0.1s;
         }
-        ul {
-            background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 10px;
-            list-style-type: square;
-        }
-        li {
-            margin: 10px 0;
+        .outbreak-item:hover, .general-item:hover {
+            background-color: #e5e7eb; /* Gray 200 */
         }
     </style>
 </head>
-<body>
-    <h1>Preventive Measures for Health Safety</h1>
-    <ul>
-        <li>Wash your hands frequently with soap and water.</li>
-        <li>Maintain social distancing of at least 1 meter.</li>
-        <li>Wear a mask in public places.</li>
-        <li>Avoid touching your face, eyes, and mouth.</li>
-        <li>Stay home if you feel unwell.</li>
-        <li>Keep your surroundings clean and sanitized.</li>
-    </ul>
+<body class="bg-bg-light font-sans min-h-screen">
+
+    <!-- Navbar matching the screenshot style -->
+    <nav class="bg-card-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/App Name -->
+                <div class="flex items-center space-x-2">
+                    <svg class="w-6 h-6 text-primary-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <span class="text-xl font-bold text-gray-800">ClimaVision</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Map</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Health Data</a>
+                    <!-- Highlighted Link -->
+                    <a href="#" class="text-primary-green border-b-2 border-primary-green px-3 py-2 text-sm font-semibold">Preventive Measures</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Fake News</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Preventive Measures</h1>
+        <p class="text-gray-600 mb-8">Stay safe with recommended precautions based on local disease outbreaks.</p>
+
+        <!-- Active Outbreaks in Your Area Section -->
+        <div class="bg-card-bg p-6 rounded-xl shadow-md mb-10">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-risk-high" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8a1 1 0 112 0v4a1 1 0 11-2 0v-4zm0-3a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd"></path></svg>
+                Active Outbreaks in Your Area
+            </h2>
+            <div class="space-y-3 text-sm">
+                <p class="flex items-center text-gray-700">
+                    <span class="text-risk-high font-bold mr-2">•</span>
+                    <span class="font-medium text-gray-900">Dengue:</span> 45 cases reported in Connaught Place
+                </p>
+                <p class="flex items-center text-gray-700">
+                    <span class="text-risk-medium font-bold mr-2">•</span>
+                    <span class="font-medium text-gray-900">Typhoid:</span> 67 cases reported in Rohini
+                </p>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-800 mb-5">Disease-Specific Precautions</h2>
+
+        <!-- Disease-Specific Prevention Cards Grid (2 columns on large screens) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Utility function for Risk Badge -->
+            <script>
+                function RiskBadge(level) {
+                    let colorClass = '';
+                    let text = level.toUpperCase();
+                    if (level === 'high') {
+                        colorClass = 'bg-risk-high text-white';
+                    } else if (level === 'medium') {
+                        colorClass = 'bg-risk-medium text-white';
+                    } else {
+                        colorClass = 'bg-risk-low text-white';
+                    }
+                    return `
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold tracking-wider ${colorClass}">
+                            ${text} RISK
+                        </span>
+                    `;
+                }
+            </script>
+
+            <!-- 1. Dengue (High Risk) -->
+            <div class="bg-card-bg p-6 rounded-xl shadow-lg card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-full bg-red-100 text-risk-high">
+                        <!-- Mosquito Icon (Inline SVG) -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <span id="dengue-risk-badge"></span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Dengue</h3>
+                <ul class="space-y-3 text-sm text-gray-700">
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Remove standing water from containers, flower pots, and tires.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Use mosquito repellent and wear long sleeved clothing.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Install mosquito nets on windows and doors.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Ensure proper waste disposal to prevent mosquito breeding.</li>
+                </ul>
+                <script>document.getElementById('dengue-risk-badge').innerHTML = RiskBadge('high');</script>
+            </div>
+
+            <!-- 2. Malaria (Medium Risk) -->
+            <div class="bg-card-bg p-6 rounded-xl shadow-lg card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-full bg-yellow-100 text-risk-medium">
+                        <!-- Sun/Heat Icon (Inline SVG) -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <span id="malaria-risk-badge"></span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Malaria</h3>
+                <ul class="space-y-3 text-sm text-gray-700">
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Sleep under insecticide-treated bed nets (ITNs).</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Take anti-malarial medication if traveling to high-risk areas.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Wear protective clothing during dusk and dawn (peak mosquito hours).</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Eliminate mosquito breeding sites around your home.</li>
+                </ul>
+                <script>document.getElementById('malaria-risk-badge').innerHTML = RiskBadge('medium');</script>
+            </div>
+
+            <!-- 3. Typhoid (High Risk) -->
+            <div class="bg-card-bg p-6 rounded-xl shadow-lg card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-full bg-red-100 text-risk-high">
+                        <!-- Cutlery Icon (Inline SVG) -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <span id="typhoid-risk-badge"></span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Typhoid</h3>
+                <ul class="space-y-3 text-sm text-gray-700">
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Drink only boiled or bottled water.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Wash hands thoroughly before eating and after using the toilet.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Get vaccinated against typhoid if in high-risk areas.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Avoid raw vegetables and fruits unless washed with safe water.</li>
+                </ul>
+                <script>document.getElementById('typhoid-risk-badge').innerHTML = RiskBadge('high');</script>
+            </div>
+
+            <!-- 4. Cholera (Low Risk) -->
+            <div class="bg-card-bg p-6 rounded-xl shadow-lg card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-full bg-blue-100 text-risk-low">
+                        <!-- Water Drop Icon (Inline SVG) -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <span id="cholera-risk-badge"></span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Cholera</h3>
+                <ul class="space-y-3 text-sm text-gray-700">
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Drink safe, treated water only; purify when necessary.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Practice good hand hygiene with soap and water frequently.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Eat thoroughly cooked food while it's hot; avoid raw or undercooked seafood.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Use proper sanitation facilities and safe waste disposal.</li>
+                </ul>
+                <script>document.getElementById('cholera-risk-badge').innerHTML = RiskBadge('low');</script>
+            </div>
+
+            <!-- 5. Pneumonia (Low Risk) -->
+            <div class="bg-card-bg p-6 rounded-xl shadow-lg card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-full bg-teal-100 text-primary-green">
+                        <!-- Lungs/Respiratory Icon (Inline SVG) -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.162 3.422a12.083 12.083 0 01.666 4.673H5.172a12.083 12.083 0 01.666-4.673L12 14z"></path></svg>
+                    </div>
+                    <span id="pneumonia-risk-badge"></span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Pneumonia</h3>
+                <ul class="space-y-3 text-sm text-gray-700">
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Get the annual flu shot and the pneumococcal vaccine.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Practice good respiratory etiquette (cover coughs/sneezes).</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Avoid smoking and exposure to secondhand smoke.</li>
+                    <li class="flex items-start"><span class="text-primary-green text-lg font-bold mr-2 mt-0.5">•</span> Maintain distance from people who are ill.</li>
+                </ul>
+                <script>document.getElementById('pneumonia-risk-badge').innerHTML = RiskBadge('low');</script>
+            </div>
+        </div>
+        
+        <!-- General Health & Safety Section -->
+        <h2 class="text-xl font-bold text-gray-800 mb-5 mt-10">General Health & Safety</h2>
+
+        <div class="bg-card-bg p-6 rounded-xl shadow-md mb-10">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center mb-4">
+                <svg class="w-5 h-5 mr-2 text-primary-green" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                Daily practices for overall well-being
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                <div class="p-3 bg-bg-light rounded-lg flex items-center general-item">
+                    <span class="text-primary-green mr-2 font-bold text-lg">✓</span> Maintain personal hygiene and wash hands regularly.
+                </div>
+                <div class="p-3 bg-bg-light rounded-lg flex items-center general-item">
+                    <span class="text-primary-green mr-2 font-bold text-lg">✓</span> Keep your surroundings clean and clutter-free.
+                </div>
+                <div class="p-3 bg-bg-light rounded-lg flex items-center general-item">
+                    <span class="text-primary-green mr-2 font-bold text-lg">✓</span> Ensure proper ventilation in living spaces.
+                </div>
+                <div class="p-3 bg-bg-light rounded-lg flex items-center general-item">
+                    <span class="text-primary-green mr-2 font-bold text-lg">✓</span> Get regular health check-ups.
+                </div>
+                <div class="p-3 bg-bg-light rounded-lg flex items-center general-item">
+                    <span class="text-primary-green mr-2 font-bold text-lg">✓</span> Stay hydrated and maintain a balanced diet.
+                </div>
+                <div class="p-3 bg-bg-light rounded-lg flex items-center general-item">
+                    <span class="text-primary-green mr-2 font-bold text-lg">✓</span> Exercise regularly to boost immunity.
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Contacts Section -->
+        <h2 class="text-xl font-bold text-gray-800 mb-5">Emergency Contacts</h2>
+        <div class="bg-card-bg p-6 rounded-xl shadow-md grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            
+            <div class="p-4 rounded-lg bg-red-50 hover:bg-red-100 transition">
+                <p class="font-semibold text-red-600">Ambulance</p>
+                <p class="text-2xl font-extrabold text-red-800 mt-1">102</p>
+            </div>
+            
+            <div class="p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition">
+                <p class="font-semibold text-blue-600">Disease Control</p>
+                <p class="text-2xl font-extrabold text-blue-800 mt-1">1073</p>
+            </div>
+
+            <div class="p-4 rounded-lg bg-green-50 hover:bg-green-100 transition">
+                <p class="font-semibold text-green-600">Health Helpline</p>
+                <p class="text-2xl font-extrabold text-green-800 mt-1">1075</p>
+            </div>
+
+            <div class="p-4 rounded-lg bg-yellow-50 hover:bg-yellow-100 transition">
+                <p class="font-semibold text-yellow-600">Police</p>
+                <p class="text-2xl font-extrabold text-yellow-800 mt-1">100</p>
+            </div>
+
+        </div>
+
+    </main>
 </body>
 </html>
