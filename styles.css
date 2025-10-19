@@ -1,1 +1,71 @@
+/* --- Global Reset & Page Setup --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #000; /* Default text color */
+}
 
+/* --- 1. Main Navbar Layout (Flexbox) --- */
+.navbar {
+    display: flex; /* Activate Flexbox */
+    justify-content: space-between; /* Pushes the brand to the left and links to the right */
+    align-items: center; /* Vertically center items */
+    padding: 10px 40px; /* Add space around the edges */
+    height: 60px; /* Set a fixed height for the bar */
+    border-bottom: 1px solid #eee; /* Light gray line at the bottom */
+}
+
+/* --- 2. Logo/Brand Styling --- */
+.navbar__brand {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.logo-icon {
+    /* Style for the black box icon */
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+    margin-right: 8px;
+    border-radius: 8px; /* Rounded corners for the icon box */
+}
+
+/* --- 3. Navigation Links Styling --- */
+.navbar__links {
+    display: flex; /* Use Flexbox to align links horizontally */
+    gap: 30px; /* Add space between the links */
+}
+
+.nav-link {
+    color: #000; /* Black text */
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    /* Important: Set the default background to transparent (white) */
+    background-color: transparent; 
+    /* Add a smooth transition for the color change */
+    transition: background-color 0.3s ease; 
+}
+/* --- 4. Styling the ACTIVE Link (The Dark Box) --- */
+.nav-link.active {
+    background-color: #000; /* Solid dark background */
+    color: #fff; /* White text color */
+    font-weight: bold;
+}
+
+/* Add hover effect to non-active links */
+.nav-link:not(.active):hover {
+    color: #555;
+}
+.hero-section {
+    /* Background Color */
+    background-color: #F8FAFF; /* This background will now span the full width */
+    
+    /* Layout and Spacing */
+    text-align: center; /* Keeps the text centered */
+    padding: 80px 20px; /* Adds space around the content */
+    
+}
