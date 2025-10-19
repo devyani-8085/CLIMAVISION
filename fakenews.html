@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fake News Detection — Demo</title>
+  <style>
+    :root{
+      --bg:#fff5e6;
+      --card:#ffffff;
+      --accent:#ff6b35;
+      --muted:#6b6b6b;
+      --good:#2d9c6b;
+      --bad:#d9534f;
+      --glass: rgba(255,255,255,0.7);
+      --shadow: 0 6px 18px rgba(20,20,20,0.08);
+      --radius:14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      min-height:100%;
+      background: linear-gradient(180deg,#fffaf2 0%, #fff5e6 100%);
+      padding:28px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      gap:20px;
+      color:#222;
+    }
+
+    .container{
+      width:100%;
+      max-width:1100px;
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:18px;
+      align-items:start;
+    }
+
+    header h1{
+      margin:0 0 6px 0;
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+    header p{margin:0;color:var(--muted);font-size:13px;}
+
+    /* Editor area */
+    .editor{
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.95));
+      border-radius:12px;
+      padding:14px;
+      height: 650px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    textarea{
+      width:100%;
+      resize:vertical;
+      min-height:320px;
+      max-height:420px;
+      border-radius:10px;
+      border:1px solid #e8e6e2;
+      padding:12px;
+      font-family: inherit;
+      font-size:14px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn{
+      background:var(--accent);
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow: 0 6px 14px rgba(255,107,53,0.18);
+    }
+    .btn.secondary{
+      background:transparent;
+      color:var(--accent);
+      border:1px solid rgba(255,107,53,0.12);
+      box-shadow:none;
+    }
+    .small{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    /* Right card */
+    .panel{
+      background:var(--glass);
+      border-radius:12px;
+      padding:16px;
+      height:650px;
+      overflow:auto;
+      box-shadow: 0 4px 12px rgba(20,20,20,0.04);
+      border:1px solid rgba(0,0,0,0.03);
+    }
+    .score{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:8px;
+    }
+    .meter{
+      width:84px;
+      height:84px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      font-size:18px;
+      color:#fff;
+      background:linear-gradient(90deg,var(--accent), #ff8a55);
+      box-shadow: 0 8px 20px rgba(255,107,53,0.12);
+    }
+    .interpret{font-size:14px;color:var(--muted);}
+
+    .list{margin-top:12px;}
+    .list h3{margin:8px 0;font-size:14px;}
+    .tag{
+      display:inline-block;
+      padding:6px 8px;
+      border-radius:999px;
+      margin:4px 6px 4px 0;
+      background:#fff;
+      border:1px solid #eee;
+      font-size:13px;
+    }
+
+    .hint{
+      background: linear-gradient(180deg,#ffffff, #fffaf7);
+      border-radius:10px;
+      padding:10px;
+      margin-top:10px;
+      font-size:13px;
+      color:var(--muted);
+      border:1px dashed rgba(0,0,0,0.03);
+    }
+
+    .bad{color:var(--bad); font-weight:700;}
+    .good{color:var(--good); font-weight:700;}
+    .explain{font-size:13px;color:#333;line-height:1.45;margin-top:8px;}
+
+    footer{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    pre.highlights{
+      background:#fff9f2;
+      padding:10px;border-radius:8px;border:1px solid #ffefdd;font-size:13px;
+      overflow:auto; max-height:140px;
+    }
+
+    @media (max-width:980px){
+      .container{grid-template-columns: 1fr; padding:14px;}
+      .panel{height:auto; order:2;}
+      .editor{height:auto;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Fake news detection tool">
+    <div>
+      <header>
+        <h1>Fake News Detection — Demo</h1>
+        <p>Paste an article, headline or claim below and click <strong>Analyze</strong>. This demo uses simple explainable checks (no machine learning).</p>
+      </header>
+
+      <div class="editor" role="region" aria-label="Editor">
+        <label for="source" class="small">Source URL (optional)</label>
+        <input id="source" type="text" placeholder="https://example.com/article..." style="padding:10px;border-radius:8px;border:1px solid #e8e6e2;font-size:13px;" />
+
+        <label for="text" class="small">Paste article / headline / claim</label>
+        <textarea id="text" placeholder="Paste full article or headline here..."></textarea>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="row">
+            <button class="btn" id="analyzeBtn" onclick="analyzeText()">Analyze</button>
+            <button class="btn secondary" onclick="clearAll()">Clear</button>
+          </div>
+
+          <div style="text-align:right;">
+            <div class="small">Example inputs:</div>
+            <div style="margin-top:6px;">
+              <span class="tag">Breaking:</span>
+              <span class="tag">Scientists shocked</span>
+              <span class="tag">Unbelievable</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:6px;">
+          <div class="small">Tips</div>
+          <div class="hint">This is a demo. For real verification: check reputable fact-checking sites (Snopes, FactCheck.org, Alt News), reverse-image search images, and verify primary sources.</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="Analysis results">
+      <div class="score">
+        <div class="meter" id="meter">—%</div>
+        <div>
+          <div id="classification" style="font-weight:800;font-size:16px">No analysis yet</div>
+          <div class="interpret" id="interpret">Paste text and click Analyze</div>
+        </div>
+      </div>
+
+      <div id="summary" class="explain">Use the analyzer to see a breakdown of signals: sensational language, punctuation, trustable source, and claim length.</div>
+
+      <div class="list">
+        <h3>Detected warning signals</h3>
+        <div id="signals">
+          <span class="tag">—</span>
+        </div>
+      </div>
+
+      <div class="list">
+        <h3>Highlighted risky phrases</h3>
+        <pre class="highlights" id="highlights">—</pre>
+      </div>
+
+      <div class="list">
+        <h3>How to verify</h3>
+        <ul style="margin:6px 0 0 18px;color:var(--muted);font-size:13px;">
+          <li>Search the headline on reputable outlets (BBC, Reuters, AP).</li>
+          <li>Check fact-checking websites for the claim.</li>
+          <li>Reverse-search images to find original source.</li>
+          <li>Look for primary sources, official statements, or direct data.</li>
+        </ul>
+      </div>
+
+      <div class="list" style="margin-top:12px;">
+        <h3>Quick actions</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn secondary" onclick="copyResults()">Copy report</button>
+          <button class="btn secondary" onclick="downloadReport()">Download .txt</button>
+          <button class="btn" onclick="openFactCheck()">Open fact-check sites</button>
+        </div>
+      </div>
+
+      <footer>
+        <div style="margin-top:10px;">Note: This demo gives a heuristic score (0-100). Lower score = more likely to be true. <strong style="color:#333">Always verify with trusted sources.</strong></div>
+      </footer>
+    </aside>
+  </div>
+
+  <script>
+    // --- Configurable heuristics ---
+    const sensationalWords = [
+      "shocking","unbelievable","you won't believe","miracle","breakthrough","shocked",
+      "secret","exposed","revealed","must see","scandal","scam","conspiracy","cure","miracle",
+      "jaw-dropping","urgent","breaking","exclusive","alert","warning","never before"
+    ];
+
+    // Helper: normalize text
+    function norm(s){
+      return (s||"").toLowerCase();
+    }
+
+    // Analyze the input text and update UI
+    function analyzeText(){
+      const textEl = document.getElementById('text');
+      const sourceEl = document.getElementById('source');
+      const text = (textEl.value || "").trim();
+      const source = (sourceEl.value || "").trim();
+
+      if(!text){
+        alert('Please paste a headline or article to analyze.');
+        return;
+      }
+
+      // Basic metrics
+      const words = text.split(/\s+/).filter(Boolean);
+      const wordCount = words.length;
+      const charCount = text.length;
+      const exclamations = (text.match(/!/g)||[]).length;
+      const questionMarks = (text.match(/\?/g)||[]).length;
+      const uppercaseWords = words.filter(w => w.length >= 2 && w === w.toUpperCase() && /[A-Z]/.test(w)).length;
+
+      // Sensational words detection (count occurrences)
+      const lower = text.toLowerCase();
+      let sensationalHits = [];
+      for(const w of sensationalWords){
+        if(lower.includes(w)) sensationalHits.push(w);
+      }
+
+      // URL trust quick check
+      let hasTrustyDomain = false;
+      if(source){
+        const domain = source.replace(/^https?:\/\//,'').split('/')[0].toLowerCase();
+        // a tiny list of well-known news domains; this is heuristic only
+        const trusted = ["reuters.com","bbc.com","apnews.com","theguardian.com","nytimes.com","washingtonpost.com","thehindu.com","timesofindia.indiatimes.com"];
+        hasTrustyDomain = trusted.some(t => domain.includes(t));
+      }
+
+      // Build a score (0-100). Lower means more likely true.
+      // Start from neutral score 50. Add penalties for sensational signals.
+      let score = 50;
+
+      // Penalties
+      score += sensationalHits.length * 8;          // sensational words increase suspicion
+      score += Math.min(10, exclamations * 6);      // exclamation marks
+      score += Math.min(12, uppercaseWords * 4);    // all caps words
+      if(wordCount < 15) score += 10;               // very short headlines can be clickbaity
+      if(wordCount > 800) score += 8;               // very long walls of text without sources
+      if(!source) score += 8;                        // no source URL -> more suspicious
+      if(questionMarks > 3) score += 4;
+
+      // Reduce score (improve) if source seems trusted
+      if(hasTrustyDomain) score -= 18;
+
+      // Clamp
+      score = Math.max(0, Math.min(100, Math.round(score)));
+
+      // Interpretation
+      let classification = "Likely Real";
+      let colorClass = "good";
+      if(score >= 70){
+        classification = "Likely False / Misleading";
+        colorClass = "bad";
+      } else if(score >= 45){
+        classification = "Possibly Misleading";
+        colorClass = "";
+      }
+
+      // Show meter: design uses percent but we invert color meaning: lower = safer
+      const meterEl = document.getElementById('meter');
+      meterEl.textContent = (100 - score) + "%";
+      meterEl.style.background = score >= 70 ? "linear-gradient(90deg,#ff6b35,#ff8a55)" : (score >= 45 ? "linear-gradient(90deg,#f6b84b,#ff8a55)" : "linear-gradient(90deg,#2d9c6b,#69d28c)");
+
+      // Show classification
+      const classEl = document.getElementById('classification');
+      classEl.textContent = classification;
+      classEl.className = colorClass;
+
+      // Interpretive text
+      const interpret = document.getElementById('interpret');
+      interpret.textContent = `Score: ${score} (0 = very suspicious, 100 = very trustworthy). Lower score indicates stronger signals of misinformation.`;
+
+      // Signals list
+      const signalsEl = document.getElementById('signals');
+      signalsEl.innerHTML = ""; // clear
+      const signals = [];
+      if(sensationalHits.length) signals.push(`Sensational words (${sensationalHits.length})`);
+      if(exclamations) signals.push(`Exclamation marks (${exclamations})`);
+      if(uppercaseWords) signals.push(`ALL CAPS words (${uppercaseWords})`);
+      if(!source) signals.push("No source provided");
+      if(!hasTrustyDomain && source) signals.push("Source is not a recognized trustworthy outlet (quick check)");
+
+      if(signals.length === 0) signalsEl.innerHTML = '<span class="tag">No strong signals detected</span>';
+      else signals.forEach(s => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = s;
+        signalsEl.appendChild(span);
+      });
+
+      // Highlight risky phrases: find occurrences of sensational words and uppercase sequences
+      const highlightsEl = document.getElementById('highlights');
+      let highlights = [];
+      if(sensationalHits.length){
+        for(const w of [...new Set(sensationalHits)]){
+          const re = new RegExp('.{0,40}\\b' + escapeRegExp(w) + '\\b.{0,40}','ig');
+          const matches = text.match(re) || [];
+          for(const m of matches){
+            highlights.push(m.trim());
+          }
+        }
+      }
+      // find uppercase runs (length >=4)
+      const upperMatches = text.match(/\b[A-Z]{4,}\b/g) || [];
+      highlights = highlights.concat(upperMatches);
+
+      // If none, show some context
+      if(highlights.length === 0){
+        highlightsEl.textContent = "No obvious sensational phrases detected. If you still suspect, perform source verification.";
+      } else {
+        highlightsEl.textContent = highlights.slice(0,8).join("\n\n");
+      }
+
+      // Summary explanation
+      const summaryEl = document.getElementById('summary');
+      let summaryText = "Breakdown: ";
+      summaryText += sensationalHits.length ? `${sensationalHits.length} sensational phrase(s). ` : "No sensational words detected. ";
+      summaryText += exclamations ? `${exclamations} exclamation(s). ` : "";
+      summaryText += uppercaseWords ? `${uppercaseWords} ALL-CAPS word(s). ` : "";
+      summaryText += source ? (hasTrustyDomain ? "Source looks like a known outlet. " : "Source present but not recognized as major outlet. ") : "No source provided. ";
+
+      summaryEl.textContent = summaryText;
+
+      // store last result on window for copy/download
+      window._lastFakeNewsReport = {
+        text, source, score, classification, signals, highlights: highlightsEl.textContent, summary: summaryText
+      };
+    }
+
+    // helpers
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function clearAll(){
+      document.getElementById('text').value = "";
+      document.getElementById('source').value = "";
+      document.getElementById('meter').textContent = "—%";
+      document.getElementById('classification').textContent = "No analysis yet";
+      document.getElementById('interpret').textContent = "Paste text and click Analyze";
+      document.getElementById('signals').innerHTML = '<span class="tag">—</span>';
+      document.getElementById('highlights').textContent = "—";
+      document.getElementById('summary').textContent = "Use the analyzer to see a breakdown of signals.";
+      window._lastFakeNewsReport = null;
+    }
+
+    function copyResults(){
+      const r = window._lastFakeNewsReport;
+      if(!r){ alert("No results to copy. Run analyze first."); return; }
+      const out = `
+Fake News Detection Report
+--------------------------
+Score: ${r.score}
+Classification: ${r.classification}
+Source: ${r.source || "(none)"}
+
+Summary:
+${r.summary}
+
+Detected signals:
+${r.signals.length ? r.signals.join(", ") : "None"}
+
+Highlights:
+${r.highlights}
+
+Original text:
+${r.text.substring(0,1000)}${r.text.length>1000?'\n\n[truncated]':''}
+`;
+      navigator.clipboard.writeText(out).then(()=> alert("Report copied to clipboard."));
+    }
+
+    function downloadReport(){
+      const r = window._lastFakeNewsReport;
+      if(!r){ alert("No results to download. Run analyze first."); return; }
+      const blob = new Blob([`Fake News Detection Report\n\n${JSON.stringify(r,null,2)}`],{type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fakenews-report.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function openFactCheck(){
+      // Open a new tab with a set of recommended fact-check sites
+      const urls = [
+        "https://www.snopes.com",
+        "https://www.factcheck.org",
+        "https://www.reuters.com/fact-check",
+        "https://www.politifact.com",
+        "https://altnews.in"
+      ];
+      urls.forEach(u => window.open(u,'_blank'));
+    }
+
+    // keyboard shortcut: Ctrl+Enter to analyze
+    document.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+        analyzeText();
+      }
+    });
+
+    // small usability: if user navigated with sample content, run quick analysis
+    window.addEventListener('load', ()=>{
+      // no auto-run
+    });
+  </script>
+</body>
+</html>
